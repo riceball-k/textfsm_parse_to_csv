@@ -14,8 +14,8 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     # テンプレートファイル名指定
-    tkinter.Tk().withdraw()
     if args.template is None:
+        tkinter.Tk().withdraw()
         template_filename = fd.askopenfilename(
             title='テンプレートファイルを選択',
             filetypes=[('テンプレート', '*.textfsm;*.template'), ('すべて', '*.*')],
@@ -28,12 +28,13 @@ if __name__ == '__main__':
 
     # ログファイル名指定
     if args.filenames == []:
+        tkinter.Tk().withdraw()
         log_filenames = fd.askopenfilenames(
             title='ログファイルを選択',
             filetypes=[('ログファイル', '*.log'), ('すべて', '*.*')],
             initialdir=Path.cwd(),
         )
-        if log_filenames == []:
+        if log_filenames == '':
             sys.exit(0)
     else:
         import glob
@@ -42,25 +43,31 @@ if __name__ == '__main__':
             log_filenames.extend(glob.glob(pattern))
 
     for filename in log_filenames:
+        # テンプレート読み込み
+        with open(template_filename, 'rt') as f:
+            try:
+                table = textfsm.TextFSM(f)
+            except textfsm.TextFSMTemplateError as e:
+                print(f'\n{e}')
+                break
+
+        # ログ読み込み & パース
         log_filename = Path(filename)
+        with log_filename.open('rt') as f:
+            print(f' input: "{log_filename}"')
+            data = table.ParseText(f.read())
+
         # CSVファイル名作成、ログファイルの保存場所に作成
         output_filename = log_filename.parent / (
             log_filename.stem + datetime.datetime.now().strftime('_%Y%m%d_%H%M%S.csv')
         )
-        print(f'出力: "{output_filename}"')
-
-        # テンプレート読み込み
-        with open(template_filename, 'rt') as f:
-            table = textfsm.TextFSM(f)
-
-        # ログ読み込み & パース
-        with log_filename.open('rt') as f:
-            data = table.ParseText(f.read())
-
         # CSVファイル出力
         with output_filename.open('wt', newline='') as f:
+            print(f'output: "{output_filename}"')
             output = csv.writer(f)
             output.writerow(table.header)
             for row in data:
                 row = [','.join(col) if type(col) is list else col for col in row]
                 output.writerow(row)
+
+    input('\nEnterを押して終了')
