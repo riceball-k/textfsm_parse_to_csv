@@ -1,27 +1,32 @@
 TextFSM Parse to CSV
 ====================
 
-���̓t�@�C����TextFSM�Ńp�[�X����CSV�t�@�C���ɏo�͂��邾���̔ėp�v���O����
+入力ファイルをTextFSMでパースしてCSVファイルに出力するだけの汎用プログラム
 
-�O��
+前提
 ----
 
-textfsm���C���X�g�[�����Ă�������
+textfsmをインストールしておくこと
 
 ```
 > pip install textfsm
 >
 ```
 
-�g�p���@
+使用方法
 --------
 
 ```
 > textfsm_parse_to_csv.py [-h] [template] [logfile [logfile ...]]
 ```
 
-- `logfile`���ȗ����ꂽ�ꍇ�A�t�@�C���_�C�A���O�őI���i�����t�@�C���I���\�j
-- `template`���ȗ����ꂽ�ꍇ�A�t�@�C���_�C�A���O�őI���i1�����I���\�j
-  - `template`�I����A`logfile`���t�@�C���_�C�A���O�őI������B
-- �o�̓t�@�C������ `�t�@�C����_yyyymmdd_hhmmss.csv`
-  - `logfile`�Ɠ���f�B���N�g���ɏo�͂���B
+- `logfile`が省略された場合、ファイルダイアログで選択（複数ファイル選択可能）
+- `template`も省略された場合、ファイルダイアログで選択（1つだけ選択可能）
+  - `template`選択後、`logfile`をファイルダイアログで選択する。
+- 出力ファイル名は `ファイル名_yyyymmdd_hhmmss.csv`
+  - `logfile`と同一ディレクトリに出力する。
+
+補足事項
+--------
+
+`List`optionが指定された`Value`については、",(カンマ）"で結合して出力する。
