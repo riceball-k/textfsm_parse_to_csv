@@ -3,20 +3,19 @@ TextFSM Parse to CSV
 
 入力ファイルをTextFSMでパースしてCSVファイルに出力するだけの汎用プログラム
 
-前提
-----
+必要なモジュール
+----------------
 
 textfsmをインストールしておくこと
 
-```
+```bash
 > pip install textfsm
->
 ```
 
 使用方法
 --------
 
-```
+```bash
 > textfsm_parse_to_csv.py [-h] [template] [logfile [logfile ...]]
 ```
 
@@ -29,4 +28,4 @@ textfsmをインストールしておくこと
 補足事項
 --------
 
-`List`optionが指定された`Value`については、",(カンマ）"で結合して出力する。
+`List`optionが指定された`Value`については、",（カンマ）"で結合して出力する。
