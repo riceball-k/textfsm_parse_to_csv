@@ -1,16 +1,19 @@
-import textfsm
-from pathlib import Path
-import sys
+import argparse
 import csv
 import datetime
-import tkinter.filedialog as fd
+import json
+import sys
 import tkinter
-import argparse
+import tkinter.filedialog as fd
+from pathlib import Path
+
+import textfsm
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('template', type=str, nargs='?', help='textfsmテンプレートファイル')
     parser.add_argument('filenames', metavar='logfile', type=str, nargs='*', help='ログファイル')
+    parser.add_argument('-j', '--json', help="JSON形式で出力", action="store_true")
     args = parser.parse_args()
 
     # テンプレートファイル名指定
@@ -55,19 +58,31 @@ if __name__ == '__main__':
         log_filename = Path(filename)
         with log_filename.open('rt') as f:
             print(f' input: "{log_filename}"')
-            data = table.ParseText(f.read())
+            read_data = f.read()
 
-        # CSVファイル名作成、ログファイルの保存場所に作成
-        output_filename = log_filename.parent / (
-            log_filename.stem + datetime.datetime.now().strftime('_%Y%m%d_%H%M%S.csv')
-        )
-        # CSVファイル出力
-        with output_filename.open('wt', newline='') as f:
-            print(f'output: "{output_filename}"')
-            output = csv.writer(f)
-            output.writerow(table.header)
-            for row in data:
-                row = [','.join(col) if type(col) is list else col for col in row]
-                output.writerow(row)
+        if args.json:
+            data = table.ParseTextToDicts(read_data)
+            # JSONファイル名作成、ログファイルの保存場所に作成
+            output_filename = log_filename.parent / (
+                log_filename.stem + datetime.datetime.now().strftime('_%Y%m%d_%H%M%S.json')
+            )
+            # JSONファイル出力
+            with output_filename.open('wt', encoding='utf-8') as f:
+                print(f'output: "{output_filename}"')
+                output = json.dump(data, f, indent=4)
+        else:
+            data = table.ParseText(read_data)
+            # CSVファイル名作成、ログファイルの保存場所に作成
+            output_filename = log_filename.parent / (
+                log_filename.stem + datetime.datetime.now().strftime('_%Y%m%d_%H%M%S.csv')
+            )
+            # CSVファイル出力
+            with output_filename.open('wt', newline='') as f:
+                print(f'output: "{output_filename}"')
+                output = csv.writer(f)
+                output.writerow(table.header)
+                for row in data:
+                    row = [','.join(col) if type(col) is list else col for col in row]
+                    output.writerow(row)
 
     input('\nEnterを押して終了')
