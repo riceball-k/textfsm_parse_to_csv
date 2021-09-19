@@ -1,36 +1,38 @@
-TextFSM Parse to CSV
-====================
+<!-- omit in toc -->
+# TextFSM Parse to CSV
 
 入力ファイルをTextFSMでパースしてCSVファイル（またはJSONファイル）に出力する
 
-必要なモジュール
-----------------
+## 必要なモジュール
 
 - Python (3.9.4で確認)
 - TextFSM
 
-使用方法
---------
+## 使用方法
 
 ```bash
-usage: textfsm_parse_to_csv.py [-h] [-j] [template] [logfile ...]
+usage: textfsm_parse_to_csv.py [-h] [-j] [-o directory] [-t template] [logfile ...]
 
 positional arguments:
-  template    textfsmテンプレートファイル
-  logfile     ログファイル
+  logfile               ログファイル
 
 optional arguments:
-  -h, --help  show this help message and exit
-  -j, --json  JSON形式で出力
+  -h, --help            show this help message and exit
+  -j, --json            JSON形式で出力
+  -o directory, --output directory
+                        出力先ディレクトリ
+  -t template, --template template
+                        TextFSMテンプレートファイル
 ```
 
-- `logfile`が省略された場合、ファイルダイアログで選択（複数ファイル選択可能）
-- `template`も省略された場合、ファイルダイアログで選択（1つだけ選択可能）
-  - `template`選択後、`logfile`をファイルダイアログで選択する。
-- 出力ファイル名は `ファイル名_yyyymmdd_hhmmss.(csv|json)`
-  - `logfile`と同一ディレクトリに出力する。
+- `-t template` `logfile` が省略された場合、ファイルダイアログで選択（複数ファイルを選択可能）
+- テンプレートファイルは複数指定可能（`-t` オプションを複数指定する）
+- デフォルトではCSV形式で出力するが、`-j` `--json`オプションをつけるとJSON形式で出力する
+- 出力ファイル名は `ログファイル名_テンプレートファイル名.(csv|json)`
+  - ログファイル名・テンプレートファイル名の拡張子部分は出力ファイル名から削除される
+- 出力ファイルは `logfile` と同一ディレクトリに保存される
+  - `-o` `--output` で出力先ディレクトリを指定可能（ディレクトリは存在すること）
 
-補足事項
---------
+## 補足事項
 
-CSVで出力する場合、`List`optionが指定された`Value`については、",（カンマ）"で結合して出力する。
+TextFSMのValueで `List` optionが指定されたものは、CSV形式では ",（カンマ）" で結合される。

@@ -1,5 +1,9 @@
 .vscode/
+.mypy_cache/
 *.csv
 *.json
 *.log
 *.textfsm
+typings/
+output/
+log/
